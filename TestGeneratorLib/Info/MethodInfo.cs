@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestGeneratorLib.Info
 {
-    class MethodInfo
+    public class MethodInfo
     {
         public string Name { get; private set; }
         public Dictionary<string, string> Parameters { get; private set; }

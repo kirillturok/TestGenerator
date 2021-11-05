@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TestGeneratorLib
 {
-    class CodeAnalyzer
+    public static class CodeAnalyzer
     {
         public static FileInfo GetFileInfo(string code)
         {

@@ -9,4 +9,8 @@
     <Folder Include="GeneratedFies\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TestGeneratorLib\TestGeneratorLib.csproj" />
+  </ItemGroup>
+
 </Project>

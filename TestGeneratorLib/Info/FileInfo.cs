@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestGeneratorLib.Info
 {
-    class FileInfo
+    public class FileInfo
     {
         public List<ClassInfo> Classes { get; private set; }
 
