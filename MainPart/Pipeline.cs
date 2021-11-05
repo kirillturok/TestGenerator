@@ -29,7 +29,8 @@ namespace MainPart
             (
                 async sourceCode =>
                 {
-                    
+                    var fileInfo = await Task.Run(() => CodeAnalyzer.GetFileInfo(sourceCode));
+                    return await Task.Run(() => TestsGenerator.GenerateTests(fileInfo));
                 },
                 execOptions
             );
