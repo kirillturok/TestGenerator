@@ -8,5 +8,10 @@ namespace MainPart.Files
 {
     class Class1
     {
+        public static void kj()
+        {
+            int a = 0;
+            int b= a++;
+        }
     }
 }

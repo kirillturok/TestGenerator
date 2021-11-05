@@ -21,6 +21,7 @@ namespace MainPart
                 {
                     using (var reader = new StreamReader(path))
                     {
+                        Console.WriteLine(path);
                         return await reader.ReadToEndAsync();
                     }
                 },
@@ -41,6 +42,7 @@ namespace MainPart
                 {
                     using (var writer = new StreamWriter(pathToGenerated + '\\' + fileNameCodePair.Key + ".cs"))
                     {
+                        Console.WriteLine(fileNameCodePair.Key + "\n" + fileNameCodePair.Key);
                         await writer.WriteAsync(fileNameCodePair.Value);
                     }
                 },
@@ -55,6 +57,7 @@ namespace MainPart
             foreach (var file in files)
             {
                 downloadStringBlock.Post(file);
+                Console.WriteLine(file);
             }
 
             downloadStringBlock.Complete();

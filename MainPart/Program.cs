@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MainPart
 {
@@ -30,6 +31,8 @@ namespace MainPart
                     select file;
 
             new Pipeline().Generate(files, pathToGenerated);
+            Thread.Sleep(2000);
+            Console.WriteLine("end.");
         }
     }
 }
