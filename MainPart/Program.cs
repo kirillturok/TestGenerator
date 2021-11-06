@@ -10,9 +10,8 @@ namespace MainPart
     {
         static void Main(string[] args)
         {
-            var pathToProject = "D:\\5 семестр\\СПП\\4\\TestGenerator\\MainPart";
-            var pathToFolder = pathToProject+"\\"+"Files";
-            var pathToGenerated = pathToProject + "\\" + "GeneratedFiles";
+            var pathToFolder = "D:\\5 семестр\\СПП\\4\\TestGenerator\\MainPart\\Files";
+            var pathToGenerated = @"D:\5 семестр\СПП\4\TestGenerator\GeneratedTests\GeneratedFiles";
             
             if (!Directory.Exists(pathToFolder))
             {

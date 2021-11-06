@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MainPart.Files
 {
-    class Class1
+    public class Class1
     {
-        public static void kj()
+        public void kj()
         {
             int a = 0;
             int b= a++;
