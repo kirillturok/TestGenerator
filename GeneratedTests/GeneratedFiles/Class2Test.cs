@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using Moq;
+using MainPart.Files;
 using System.Collections.Generic;
 
 [TestFixture]

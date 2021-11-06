@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using TestGeneratorLib;
@@ -21,7 +20,6 @@ namespace MainPart
                 {
                     using (var reader = new StreamReader(path))
                     {
-                        Console.WriteLine(path);
                         return await reader.ReadToEndAsync();
                     }
                 },
@@ -42,7 +40,6 @@ namespace MainPart
                 {
                     using (var writer = new StreamWriter(pathToGenerated + '\\' + fileNameCodePair.Key + ".cs"))
                     {
-                        Console.WriteLine(fileNameCodePair.Key + "\n" + fileNameCodePair.Key);
                         await writer.WriteAsync(fileNameCodePair.Value);
                     }
                 },
@@ -50,10 +47,7 @@ namespace MainPart
             );
             downloadStringBlock.LinkTo(generateTestsBlock, linkOptions);
             generateTestsBlock.LinkTo(writeFileBlock, linkOptions);
-            
-            //if doesnt work
-            //check Post argument
-            //v gthb
+
             foreach (var file in files)
             {
                 downloadStringBlock.Post(file);

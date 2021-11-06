@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace MainPart
 {
@@ -29,8 +28,8 @@ namespace MainPart
                     where file.Substring(file.Length - 3) == ".cs"
                     select file;
 
-            new Pipeline().Generate(files, pathToGenerated);
-            Thread.Sleep(2000);
+            Task task =  new Pipeline().Generate(files, pathToGenerated);
+            task.Wait();
             Console.WriteLine("end.");
         }
     }
