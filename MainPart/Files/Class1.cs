@@ -8,10 +8,17 @@ namespace MainPart.Files
 {
     public class Class1
     {
-        public void kj()
+
+        int t;
+        public Class1(string str)
+        {
+
+        }
+        public int kj()
         {
             int a = 0;
             int b= a++;
+            return b;
         }
     }
 }

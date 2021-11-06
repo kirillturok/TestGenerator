@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using TestGeneratorLib.Info;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -27,17 +28,22 @@ namespace TestGeneratorLib
         public static Dictionary<string,string> GenerateTests(FileInfo fileInfo)
         {
             var fileNameCode = new Dictionary<string, string>();
-            foreach (var classInfo in fileInfo.Classes)
-            {
-                var classDeclaration = GenerateClass(classInfo);
-                var compilationUnit = SyntaxFactory.CompilationUnit()
+            string resultCode = "";
+            var compilationUnit = SyntaxFactory.CompilationUnit()
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")))
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("NUnit.Framework")))
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("MainPart.Files")))
-                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")))
-                    .AddMembers(classDeclaration);
-                fileNameCode.Add(classInfo.ClassName + "Test",compilationUnit.NormalizeWhitespace().ToFullString());
+                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Moq")))
+                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")));
+            resultCode += compilationUnit.NormalizeWhitespace().ToFullString();
+            foreach (var classInfo in fileInfo.Classes)
+            {
+                
+                var classDeclaration = GenerateClass(classInfo);
+                var compilUnit = SyntaxFactory.CompilationUnit().AddMembers(classDeclaration);
+                resultCode +="\n"+ compilUnit.NormalizeWhitespace().ToFullString();
             }
+            fileNameCode.Add(fileInfo.Classes[0].ClassName + "Test", resultCode);
             return fileNameCode;
         }
 
@@ -49,7 +55,7 @@ namespace TestGeneratorLib
             ConstructorInfo constructor = null;
             if (classInfo.Constructors.Count > 0)
             {
-                constructor = FindConstructorWithLargestNumOfParams(classInfo.Constructors);
+                constructor = FindLargestConstructor(classInfo.Constructors);
                 interfaces = GetCustomTypeVariables(constructor.Parameters);
                 foreach (var custom in interfaces)
                 {
@@ -58,7 +64,7 @@ namespace TestGeneratorLib
                 }
             }
 
-            variable = GenerateVariable(GetCheckedClassVariable(classInfo.ClassName), classInfo.ClassName);
+            variable = GenerateVariable(GetClassVariableName(classInfo.ClassName), classInfo.ClassName);
             fields.Add(GenerateField(variable));
             var methods = new List<MethodDeclarationSyntax>();
             methods.Add(GenerateSetUpMethod(constructor, classInfo.ClassName));
@@ -73,7 +79,7 @@ namespace TestGeneratorLib
                 .AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.AttributeList().Attributes.Add(ClassAttribute)));
         }
 
-        private static ConstructorInfo FindConstructorWithLargestNumOfParams(List<ConstructorInfo> constructors)
+        private static ConstructorInfo FindLargestConstructor(List<ConstructorInfo> constructors)
         {
             var constructor = constructors[0];
             foreach (var temp in constructors)
@@ -83,7 +89,6 @@ namespace TestGeneratorLib
                     constructor = temp;
                 }
             }
-
             return constructor;
         }
 
@@ -104,6 +109,7 @@ namespace TestGeneratorLib
         private static Dictionary<string, string> GetCustomTypeVariables(Dictionary<string, string> parameters)
         {
             var res = new Dictionary<string, string>();
+            
             foreach (var parameter in parameters)
             {
                 if (parameter.Value[0] == 'I')
@@ -127,7 +133,7 @@ namespace TestGeneratorLib
             return s.Length > 0 ? s.Remove(s.Length - 2, 2) : "";
         }
 
-        private static string GetCheckedClassVariable(string className)
+        private static string GetClassVariableName(string className)
         {
             return "_" + className[0].ToString().ToLower() + className.Remove(0, 1);
         }
@@ -199,11 +205,11 @@ namespace TestGeneratorLib
         {
             if (methodInfo.ReturnType != "void")
             {
-                body.Add(GenerateFunctionCall("actual", GetCheckedClassVariable(checkedClassVariable) + "." + methodInfo.Name, ConvertParametersToStringRepresentation(methodInfo.Parameters)));
+                body.Add(GenerateFunctionCall("actual", GetClassVariableName(checkedClassVariable) + "." + methodInfo.Name, ConvertParametersToStringRepresentation(methodInfo.Parameters)));
             }
             else
             {
-                body.Add(GenerateVoidFunctionCall(GetCheckedClassVariable(checkedClassVariable) + "." + methodInfo.Name, ConvertParametersToStringRepresentation(methodInfo.Parameters)));
+                body.Add(GenerateVoidFunctionCall(GetClassVariableName(checkedClassVariable) + "." + methodInfo.Name, ConvertParametersToStringRepresentation(methodInfo.Parameters)));
             }
         }
 
@@ -251,7 +257,10 @@ namespace TestGeneratorLib
                 }
             }
 
-            body.Add(GenerateCustomsTypesAssignStatement(GetCheckedClassVariable(className), className, constructorInfo != null ? ConvertParametersToStringRepresentation(constructorInfo.Parameters) : ""));
+            body.Add(GenerateCustomsTypesAssignStatement(
+                GetClassVariableName(className), 
+                className, 
+                constructorInfo != null ? ConvertParametersToStringRepresentation(constructorInfo.Parameters) : ""));
             return SyntaxFactory.MethodDeclaration(VoidReturnType, "SetUp")
                 .AddModifiers(PublicModifier)
                 .AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.AttributeList().Attributes.Add(SetupAttribute)))

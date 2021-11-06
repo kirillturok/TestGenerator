@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MainPart
@@ -29,7 +30,8 @@ namespace MainPart
                     select file;
 
             Task task =  new Pipeline().Generate(files, pathToGenerated);
-            task.Wait();
+            //task.Wait();
+            Thread.Sleep(2000);
             Console.WriteLine("end.");
         }
     }

@@ -30,6 +30,7 @@ namespace MainPart
                 async sourceCode =>
                 {
                     var fileInfo = await Task.Run(() => CodeAnalyzer.GetFileInfo(sourceCode));
+                    Console.WriteLine("zzz");
                     return await Task.Run(() => TestsGenerator.GenerateTests(fileInfo));
                 },
                 execOptions
@@ -38,8 +39,10 @@ namespace MainPart
             (
                 async fileNameCodePair =>
                 {
+                    Console.WriteLine("ohoho");
                     using (var writer = new StreamWriter(pathToGenerated + '\\' + fileNameCodePair.Key + ".cs"))
                     {
+                        Console.WriteLine("hhh"+fileNameCodePair.Key);
                         await writer.WriteAsync(fileNameCodePair.Value);
                     }
                 },
