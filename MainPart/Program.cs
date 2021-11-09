@@ -30,8 +30,8 @@ namespace MainPart
                     select file;
 
             Task task =  new Pipeline().Generate(files, pathToGenerated);
-            //task.Wait();
-            Thread.Sleep(2000);
+            task.Wait();
+            //Thread.Sleep(2000);
             Console.WriteLine("end.");
         }
     }

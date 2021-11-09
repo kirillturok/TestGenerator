@@ -25,25 +25,23 @@ namespace TestGeneratorLib
             ClassAttribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("TestFixture"));
         }
 
-        public static Dictionary<string,string> GenerateTests(FileInfo fileInfo)
+        public static Dictionary<string, string> GenerateTests(FileInfo fileInfo)
         {
             var fileNameCode = new Dictionary<string, string>();
-            string resultCode = "";
-            var compilationUnit = SyntaxFactory.CompilationUnit()
+
+            foreach (var classInfo in fileInfo.Classes)
+            {
+                var classDeclaration = GenerateClass(classInfo);
+                var compilationUnit = SyntaxFactory.CompilationUnit()
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")))
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("NUnit.Framework")))
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("MainPart.Files")))
                     .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Moq")))
-                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")));
-            resultCode += compilationUnit.NormalizeWhitespace().ToFullString();
-            foreach (var classInfo in fileInfo.Classes)
-            {
-                
-                var classDeclaration = GenerateClass(classInfo);
-                var compilUnit = SyntaxFactory.CompilationUnit().AddMembers(classDeclaration);
-                resultCode +="\n"+ compilUnit.NormalizeWhitespace().ToFullString();
+                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")))
+                    .AddMembers(classDeclaration);
+                fileNameCode.Add(classInfo.ClassName + "Test", compilationUnit.NormalizeWhitespace().ToFullString());
             }
-            fileNameCode.Add(fileInfo.Classes[0].ClassName + "Test", resultCode);
+
             return fileNameCode;
         }
 
@@ -109,7 +107,7 @@ namespace TestGeneratorLib
         private static Dictionary<string, string> GetCustomTypeVariables(Dictionary<string, string> parameters)
         {
             var res = new Dictionary<string, string>();
-            
+
             foreach (var parameter in parameters)
             {
                 if (parameter.Value[0] == 'I')
@@ -258,8 +256,8 @@ namespace TestGeneratorLib
             }
 
             body.Add(GenerateCustomsTypesAssignStatement(
-                GetClassVariableName(className), 
-                className, 
+                GetClassVariableName(className),
+                className,
                 constructorInfo != null ? ConvertParametersToStringRepresentation(constructorInfo.Parameters) : ""));
             return SyntaxFactory.MethodDeclaration(VoidReturnType, "SetUp")
                 .AddModifiers(PublicModifier)

@@ -8,7 +8,7 @@ using TestGeneratorLib;
 
 namespace MainPart
 {
-    class Pipeline
+    public class Pipeline
     {
         public Task Generate(IEnumerable<string> files, string pathToGenerated)
         {
